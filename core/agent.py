@@ -1,18 +1,16 @@
 """Defines the Agent class responsible for decision-making."""
 
-import random
+import numpy as np
+
+from core.policy import Policy
 
 
 class Agent:
-    """Simple agent with epsilon-greedy strategy."""
+    """Agent that uses a policy to select actions."""
 
-    def __init__(self, action_space, epsilon: float = 0.1):
-        self.action_space = action_space
-        self.epsilon = epsilon
+    def __init__(self, policy: Policy):
+        self.policy = policy
 
-    def select_action(self, state):
-        """Select an action based on epsilon-greedy policy."""
-        if random.random() < self.epsilon:
-            return self.action_space.sample()
-        # TODO: Replace with a learned policy
-        return self.action_space.sample()
+    def select_action(self, state: np.ndarray) -> np.ndarray:
+        """Delegate action selection to the policy."""
+        return self.policy.select_action(state)

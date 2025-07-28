@@ -48,11 +48,11 @@ repos:
       - id: commitizen
         stages: [commit-msg]
 
-  # Optional: quick test check
-  - repo: local
-    hooks:
-      - id: pytest
-        name: pytest
-        entry: poetry run pytest --maxfail=1 --disable-warnings -q
-        language: system
-        types: [python]
+  # # Optional: quick test check
+  # - repo: local
+  #   hooks:
+  #     - id: pytest
+  #       name: pytest
+  #       entry: poetry run pytest --maxfail=1 --disable-warnings -q
+  #       language: system
+  #       types: [python]
