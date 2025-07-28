@@ -1,4 +1,5 @@
 """Entry point for the RL project."""
+
 from application.train_agent import train_agent
 
 if __name__ == "__main__":
