@@ -14,9 +14,6 @@ class GymEnvironmentAdapter:
     def reset(self):
         """Reset the environment and return the initial observation."""
         state, info = self.env.reset()
-        # reset returns:
-        #       - state: current state
-        #       - info: additional metadata
         return state
 
     def step(self, action):
