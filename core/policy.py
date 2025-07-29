@@ -16,8 +16,10 @@ class Policy(ABC):
         pass
 
 
-class PolicyNetwork(Policy):
+class PolicyNetwork(nn.Module, Policy):
     """Neural network-based policy for continuous action spaces."""
+
+    # Hybrid Inheritance: both Policy and nn.Module
 
     def __init__(
         self,
@@ -26,32 +28,33 @@ class PolicyNetwork(Policy):
         action_high: np.ndarray,
         action_low: np.ndarray,
     ):
-        self.action_high = action_high
-        self.action_low = action_low
+        super().__init__()  # Initialize nn.Module
+        self.action_high = torch.tensor(action_high, dtype=torch.float32)
+        self.action_low = torch.tensor(action_low, dtype=torch.float32)
 
-        # Simple feedforward network
+        # Simple feedforward policy network
         self.model = nn.Sequential(
             nn.Linear(state_dim, 64),
             nn.ReLU(),
             nn.Linear(64, 64),
             nn.ReLU(),
             nn.Linear(64, action_dim),
-            nn.Tanh(),  # Output between -1 and 1
+            nn.Tanh(),
         )
-        # We end up with "action_dim" floats in the [-1, 1] range
 
     def select_action(self, state: np.ndarray) -> np.ndarray:
-        """Compute an action using the policy network and scale it to the environment's range."""
+        """Compute an action for the given state."""
         state_tensor = torch.FloatTensor(state).unsqueeze(0)  # Shape: (1, state_dim)
-        raw_action = self.model(state_tensor).detach().numpy()[0]  # Output in [-1, 1]
-
-        # Scale action to environment's action space
-        scaled_action = self._scale_action(raw_action)
+        scaled_action = self._forward(state_tensor).detach().numpy()[0]
         return scaled_action
 
-    def _scale_action(self, raw_action: np.ndarray) -> np.ndarray:
+    def _forward(self, state: torch.Tensor) -> torch.Tensor:
+        """Forward pass through the network."""
+        raw_action = self.model(state)  # Output in [-1, 1]
+        return self._scale_action(raw_action)  #  Output in [-2, 2]
+
+    def _scale_action(self, raw_action: torch.Tensor) -> torch.Tensor:
         """Scale action from [-1, 1] to [action_low, action_high]."""
-        # In the case of Pusher-v5 this scale the results from [-1, 1] to [-2, 2]
         return self.action_low + (raw_action + 1.0) * 0.5 * (
             self.action_high - self.action_low
         )

@@ -64,6 +64,18 @@ rl-mujoco-pusher/
 ![pusher](https://github.com/MartinezAgullo/rl-mujoco-pusher/blob/main/docs/pusher.png)
 
 ### Observation space
+The observation space consists of the following 23 parts (in order):
+
+- qpos (7 elements): Position values of the robot’s body parts.
+
+- qvel (7 elements): The velocities of these individual body parts (their derivatives).
+
+- xpos (3 elements): The coordinates of the fingertip of the pusher.
+
+- xpos (3 elements): The coordinates of the object to be moved.
+
+-xpos (3 elements): The coordinates of the goal position.
+
 
 ### Rewards
 

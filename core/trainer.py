@@ -11,23 +11,30 @@ class Trainer:
         self.max_steps = max_steps
 
     def run(self):
-        """Run the training loop."""
+        """Run the training loop with basic policy updates."""
+
         for episode in range(self.episodes):
-            state = (
-                self.env.reset()
-            )  # Reset environment to start a new episode. State is what the agent can see
+            state = self.env.reset()
             done = False
-            total_reward = 0
+            total_reward = 0.0
 
             print(f"Starting Episode {episode + 1}/{self.episodes}")
             print(f"Initial Observation: {state}")
 
+            steps = 0
             for step in range(self.max_steps):
+                steps += 1
+
                 # Agent selects an action based on the current state
-                action = self.agent.select_action(state)
+                action = self.agent.select_action(state, explore=True)
 
                 # Interact with the environment using the chosen action
                 next_state, reward, done, truncated, info = self.env.step(action)
+
+                # Store experience
+                self.agent.store_transition(state, action, reward, next_state)
+
+                self.agent.train_step()
 
                 # Accumulate the reward
                 total_reward += reward
@@ -37,11 +44,13 @@ class Trainer:
 
                 if done:
                     print(
-                        "Episode ended early: environment signaled termination (done=True)."
+                        f"Episode ended early after {steps} steps: environment signaled termination (done=True)."
                     )
                     break
                 if truncated:
-                    print("Episode reached time limit (truncated=True).")
+                    print(
+                        f"Episode reached time limit (truncated=True) after {steps} steps:"
+                    )
                     break
 
             print(f"Episode {episode+1}/{self.episodes} - Total Reward: {total_reward}")

@@ -1,4 +1,4 @@
-"""Use case: Train the agent using a Gym environment."""
+"""Use case: Train the agent using a Gym environment and a policy network."""
 
 from config.settings import ENV_NAME, EPISODES, MAX_STEPS
 from core.agent import Agent
