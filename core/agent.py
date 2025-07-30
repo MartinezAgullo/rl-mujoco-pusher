@@ -39,23 +39,37 @@ class Agent:
         # If there are less than 10 transitions stored, do nothing
         # To avoid training where there is not enough data.
         if len(self.memory) < 10:
+            print(
+                f"[agent.py - train_step()]    Not trainign because lack of data, only {len(self.memory)} datapoints"
+            )
             return
 
         # Sample last 10 transitions:
         batch = self.memory[-10:]  # It could be better to do random sampling
         states, actions, rewards, next_states = zip(*batch)
 
-        # Convert states and rewards to tensors:
-        states = torch.FloatTensor(states)
-        rewards_tensor = torch.FloatTensor(rewards).unsqueeze(1)
+        # Convert states and rewards to tensors efficiently:
+        states = torch.from_numpy(np.array(states, dtype=np.float32))
+        rewards_tensor = torch.tensor(rewards, dtype=torch.float32).unsqueeze(1)
+
+        print(f"[agent.py - train_step()]    Batch size: {len(batch)}")
+        print(f"[agent.py - train_step()]    State shape: {states.shape}")
+        print(f"[agent.py - train_step()]    Reward: {rewards_tensor.mean().item()}")
 
         # Forward pass through the policy
-        # predicted_actions = self.policy(states)
+        predicted_actions = self.policy(states)
+        print(
+            f"[agent.py - train_step()]    Predicted actions shape: {predicted_actions.shape}"
+        )
 
         # Placeholder loss: encourage positive rewards
+        # NOTE: Currently this does NOT optimize for rewards, just ensures graph exists
         loss = -rewards_tensor.mean()  # Very naive, replace later
+        print(f"[agent.py - train_step()]    Computed placeholder loss: {loss.item()}")
 
         # Backpropagation and optimizer step
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
+
+        print("[agent.py - train_step()]    Completed optimizer step")

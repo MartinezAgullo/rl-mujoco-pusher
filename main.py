@@ -35,10 +35,12 @@ def main():
 
     # Train the RL agent
     if args.mode == "train":
+        print("[main.py] Mode: Training")
         train_agent()
 
     # Evaluate the RL agent
     elif args.mode == "eval":
+        print("[main.py] Mode: Evaluation")
         if not args.model_path:
             raise ValueError("You must provide --model-path when evaluating.")
         evaluate_agent(model_path=args.model_path, render=args.render)

@@ -45,10 +45,10 @@ class PolicyNetwork(nn.Module, Policy):
     def select_action(self, state: np.ndarray) -> np.ndarray:
         """Compute an action for the given state."""
         state_tensor = torch.FloatTensor(state).unsqueeze(0)  # Shape: (1, state_dim)
-        scaled_action = self._forward(state_tensor).detach().numpy()[0]
+        scaled_action = self.forward(state_tensor).detach().numpy()[0]
         return scaled_action
 
-    def _forward(self, state: torch.Tensor) -> torch.Tensor:
+    def forward(self, state: torch.Tensor) -> torch.Tensor:
         """Forward pass through the network."""
         raw_action = self.model(state)  # Output in [-1, 1]
         return self._scale_action(raw_action)  #  Output in [-2, 2]

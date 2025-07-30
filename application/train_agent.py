@@ -18,11 +18,20 @@ def train_agent():
     action_low = env.action_space.low
 
     # Initialize policy network
+    print("[train_agent.py - train_agent()] Initialize policy network")
     policy_network = PolicyNetwork(state_dim, action_dim, action_high, action_low)
 
     # Create agent with the policy network
+    print("[train_agent.py - train_agent()] Create agent with the policy network")
     agent = Agent(policy=policy_network)
 
     # Create trainer and run training loop
+    print("[train_agent.py - train_agent()] Create trainer and run training loop")
     trainer = Trainer(env, agent, episodes=EPISODES, max_steps=MAX_STEPS)
     trainer.run()
+
+
+"""
+First we implement the "REINFORCE" strategy for simplicity, then let's move
+to "Actor-Critic" and finnaly to "DDPG"
+"""
